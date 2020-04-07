@@ -1,0 +1,17 @@
+private WebClient setupClient(final String username, final String password) {
+  final WebClient client = new WebClient(BrowserVersion.FIREFOX_24);
+  final WebClientOptions options = client.getOptions();
+  DefaultCredentialsProvider credentials = new DefaultCredentialsProvider();
+  credentials.addCredentials(username, password);
+  client.setCredentialsProvider(credentials);
+  options.setRedirectEnabled(true);
+  options.setThrowExceptionOnFailingStatusCode(true);
+  client.addWebWindowListener(new ValidateOnContentChange());
+  client.getCookieManager().setCookiesEnabled(false);
+
+  // Try to log only "interesting" things:
+  // Don't log errors we can't fix due to browser bugs etc.
+  client.setIncorrectnessListener(new SuppressingIncorrectnessListener());
+
+  return client;
+}
